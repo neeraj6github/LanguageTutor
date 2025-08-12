@@ -13,10 +13,12 @@ dotenv.config();
 const app = express();
 
 // Allowed origins for local + production
-app.use(cors({
-  origin: '*', // Allow all origins temporarily for debugging
-  credentials: true
-})); // Remove undefined
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 
 // CORS setup
 app.use(cors({
