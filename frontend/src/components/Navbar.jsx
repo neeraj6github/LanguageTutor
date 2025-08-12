@@ -1,14 +1,13 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase/config";
-import { gsap } from "gsap";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const buttonGroupRef = useRef(null);
+  const [showButtons, setShowButtons] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -17,16 +16,11 @@ const Navbar = () => {
     return () => unsubscribe();
   }, []);
 
+  // Fade in nav buttons when path changes
   useEffect(() => {
-    if (buttonGroupRef.current) {
-      gsap.from(buttonGroupRef.current.children, {
-        opacity: 0,
-        y: -20,
-        stagger: 0.1,
-        duration: 0.6,
-        ease: "power2.out",
-      });
-    }
+    setShowButtons(false);
+    const timer = setTimeout(() => setShowButtons(true), 50); // small delay for smooth fade
+    return () => clearTimeout(timer);
   }, [location]);
 
   const handleLogout = async () => {
@@ -39,15 +33,19 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white px-6 py-4 flex justify-between items-center shadow-lg">
+    <nav className="w-full bg-gradient-to-br from-[#973aa8] via-[#6411ad] to-[#3a0ca3] text-white px-6 py-4 flex justify-between items-center shadow-lg backdrop-blur-lg border-b border-white/10">
       <h1
-        className="text-3xl font-extrabold tracking-wide font-mono cursor-pointer hover:text-yellow-300 transition duration-200"
+        className="text-3xl font-extrabold tracking-wide font-mono cursor-pointer bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-orange-400 hover:to-yellow-300 transition duration-300"
         onClick={() => handleNavigate("/")}
       >
-        AI-ChitChat
+        TextTune
       </h1>
 
-      <div className="flex gap-3 mt-1" ref={buttonGroupRef}>
+      <div
+        className={`flex gap-3 mt-1 transition-opacity duration-500 ${
+          showButtons ? "opacity-100" : "opacity-0"
+        }`}
+      >
         {location.pathname === "/" && (
           <>
             <NavButton onClick={() => handleNavigate("/login")} label="Login" />
@@ -80,11 +78,11 @@ const Navbar = () => {
   );
 };
 
-// Button with dark blue theme
 const NavButton = ({ onClick, label }) => (
   <button
     onClick={onClick}
-    className="px-4 py-2 rounded-lg border border-white bg-white text-blue-900 font-semibold hover:bg-blue-100 hover:text-blue-900 transition duration-200 shadow-md hover:shadow-lg"
+    className="px-4 py-2 rounded-lg bg-[#d1d5db] text-black font-semibold
+               hover:bg-[#b3b9c6] transition duration-300 shadow-md hover:shadow-lg"
   >
     {label}
   </button>
