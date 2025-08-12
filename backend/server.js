@@ -13,11 +13,10 @@ dotenv.config();
 const app = express();
 
 // Allowed origins for local + production
-const allowedOrigins = [
-  "http://localhost:5173", // Vite
-  "http://127.0.0.1:5173", // Alternate Vite
-  process.env.FRONTEND_URL // Prod from .env
-].filter(Boolean); // Remove undefined
+app.use(cors({
+  origin: '*', // Allow all origins temporarily for debugging
+  credentials: true
+})); // Remove undefined
 
 // CORS setup
 app.use(cors({
